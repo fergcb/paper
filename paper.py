@@ -1,6 +1,7 @@
-from .stack import Stack
+from stack import Stack
 
 block_chars = "WRM?["
+
 
 def parse_blocks(s):
     def parse_blocks_(level=0):
@@ -25,4 +26,11 @@ def parse_blocks(s):
 
 
 def execute(tokens, stack=Stack()):
-    pass
+    tokens = iter(tokens)
+    while True:
+        try:
+            token = next(tokens)
+        except StopIteration:
+            return stack
+        if type(token) is list:
+
