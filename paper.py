@@ -1,3 +1,4 @@
+from .stack import Stack
 
 block_chars = "WRM?["
 
@@ -23,7 +24,5 @@ def parse_blocks(s):
     return parse_blocks_()
 
 
-code = "abcWdef}abcRgurkfWfdjskdf}dsf}sdassd}"
-
-tokens = parse_blocks(code)
-print(tokens)
+def execute(tokens, stack=Stack()):
+    pass
