@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,400i,700,700i&display=swap');
+
+:root {
+    /* Colours */
+
+    --c-primary: #263238;
+    --c-primary-light: #4f5b62;
+    --c-primary-dark: #000a12;
+
+    --c-secondary: #ff8a80;
+    --c-secondary-light: #ffbcaf;
+    --c-secondary-dark: #c85a54;
+
+    --c-bg-light: #f5f5f5;
+    --c-bg-light-shade: #e1e1e1;
+    --c-bg-dark: #263238;
+    --c-bg-dark-shade: #222d33;
+
+    --c-text-on-primary: #ffffff;
+    --c-text-on-secondary: #000000;
+    --c-text-on-light: #000000;
+    --c-text-on-dark: #fefefe;
+
+    /* Default to dark theme */
+    --c-bg: var(--c-bg-dark);
+    --c-bg-shade: var(--c-bg-dark-shade);
+    --c-text-on-bg: var(--c-text-on-dark);
+
+    /* Fonts */
+    --f-mono: 'Ubuntu Mono', monospace;
+}
+
+/* Use dark theme if user prefers dark mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --c-bg: var(--c-bg-dark);
+        --c-bg-shade: var(--c-bg-dark-shade);
+        --c-text-on-bg: var(--c-text-on-dark);
+    }
+}
+
+/* Use light theme if user prefers light mode */
+@media (prefers-color-scheme: light) {
+    :root {
+        --c-bg: var(--c-bg-light);
+        --c-bg-shade: var(--c-bg-light-shade);
+        --c-text-on-bg: var(--c-text-on-light);
+    }
+}
+
+.btn {
+    border-radius: 0;
+    border: solid 2px;
+    font-weight: bold;
+    margin-right: 5px;
+    height: 2rem;
+    padding: 0 1rem;
+}
+
+.btn:focus {
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    resize: none;
+}
+
+.btn:hover {
+    background-color: rgba(0, 0, 0, 0);
+    border: solid 2px;
+    border-color: inherit;
+    color: var(--c-text-on-background);
+}
+
+.btn-primary {
+    background-color: var(--c-primary-dark);
+    border-color: var(--c-primary-dark);
+    color: var(--c-text-on-primary);
+}
+
+.btn-secondary {
+    background-color: var(--c-secondary);
+    border-color: var(--c-secondary);
+    color: var(--c-text-on-secondary);
+}
+
+.col {
+    padding: 0;
+}
+
+main {
+    height: 100vh;
+    background-color: var(--c-bg);
+    color: var(--c-text-on-bg);
+    font-family: var(--f-mono);
+}
+
+#header {
+    height: 3rem;
+    margin-bottom: 1rem;
+}
+
+#content {
+    height: calc(100vh - 7rem);
+}
+
+#content > .row {
+    height: 100%;
+    overflow: hidden;
+}
+
+#controls {
+    margin-bottom: 10px;
+    margin-left: -10px;
+}
+
+#input, #output {
+    padding: 0;
+}
+
+#input > textarea,
+#output > textarea {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+
+    background-color: var(--c-bg-shade);
+    color: var(--c-text-on-bg);
+    border: 1px solid var(--c-primary-light);
+
+    font-family: var(--f-mono);
+
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    resize: none;
+}
+
+#input > textarea:focus,
+#output > textarea:focus {
+    border: 2px solid var(--c-secondary)
+}
+
+#input > textarea {
+    border-right: none;
+}
