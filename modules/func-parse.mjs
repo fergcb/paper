@@ -18,7 +18,7 @@ export function parse(p, inp) {
  * Match a sequence of expressions and return their results in an array.
  * @method sequence
  * @param  {array} a An array of expressions to match
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function sequence(a) {
     let f = function(inp) {
@@ -49,7 +49,7 @@ export function sequence(a) {
  * the first successful match. Fail if none of the expressions match.
  * @method choice
  * @param  {array} a An array of expressions to try to match
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function choice(a) {
     let f = function(inp) {
@@ -73,7 +73,7 @@ export function choice(a) {
  * return null (still passing as a successful match).
  * @method optional
  * @param  {function} p The expression to match
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function optional(p) {
     let f = function(inp) {
@@ -95,7 +95,7 @@ export function optional(p) {
  * Match an expression without consuming input. Succeed if expression matches.
  * @method and
  * @param  {function} p The expression to match
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function and(p) {
     let f = function(inp) {
@@ -120,7 +120,7 @@ export function and(p) {
  * Match an expression without consuming input. Succeed if expression does not match.
  * @method not
  * @param  {function} p The expression to match
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function not(p) {
     let f = function(inp) {
@@ -146,7 +146,7 @@ export function not(p) {
  * @method some
  * @param  {function} p            The expression to match
  * @param  {array}    prevMatches  An array of previous matches (optional)
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function some(p, prevMatches) {
     let f = function(inp) {
@@ -177,7 +177,7 @@ export function some(p, prevMatches) {
  * Match a single character
  * @method char
  * @param  {string} c The character to match
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function char(c) {
     let f = function(inp) {
@@ -198,7 +198,7 @@ export function char(c) {
  * Match an entire string
  * @method string
  * @param  {string} s The string to match
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function string(s) {
     let f = function(inp) {
@@ -219,7 +219,7 @@ export function string(s) {
 /**
  * Match a single base 10 digit
  * @method digit
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function digit() {
     let f = function(inp) {
@@ -243,7 +243,7 @@ export function digit() {
  * Match a base 10 natural number,
  * consuming all consecutive digits
  * @method digit
- * @return {funcion} Expression function
+ * @return {function} Expression function
  */
 export function nat() {
     let f = function(inp) {
