@@ -1,0 +1,25 @@
+{
+  "name": "paper-lang",
+  "version": "0.0.1",
+  "description": "Paper is a stack-based programming language.\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[Dtiny, \u001b[2~stack\u001b[2~-based programming language.",
+  "main": "paper.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FergusBentley/paper.git"
+  },
+  "author": "Fergus Bentley",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/FergusBentley/paper/issues"
+  },
+  "homepage": "https://github.com/FergusBentley/paper#readme",
+  "devDependencies": {
+    "jsdoc": "^3.6.3"
+  }
+}
