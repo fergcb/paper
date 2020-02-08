@@ -1,7 +1,12 @@
-
-
-export function parse(p, inp) {
-    let matches = p(inp);
+/**
+ * Apply a parsing function to a string and return the parsed structure
+ * @method parse
+ * @param  {function} parser  The expression to apply
+ * @param  {string}   input   The string to parse
+ * @return {any}              The result of parsing
+ */
+export function parse(parser, input) {
+    let matches = parser(input);
     if (matches.length > 0) {
         let [parsed, remaining] = matches[0];
         if (remaining.length == 0) {
@@ -17,12 +22,12 @@ export function parse(p, inp) {
 /**
  * Match a sequence of expressions and return their results in an array.
  * @method sequence
- * @param  {array} a An array of expressions to match
- * @return {function} Expression function
+ * @param  {array}    expressions An array of expressions to match
+ * @return {function}             Expression function
  */
-export function sequence(a) {
-    let f = function(inp) {
-        return [a.reduce(function(acc, curr){
+export function sequence(expressions) {
+    let f = function(input) {
+        return [expressions.reduce(function(acc, curr){
             let [matched, remaining] = acc;
             let matches = curr(remaining);
             if (matches.length > 0) {
@@ -34,11 +39,11 @@ export function sequence(a) {
                 throw "Failed to match `" + funcString + "` at '" + remaining + "'.";
             }
             return [];
-        }, [[], inp])];
+        }, [[], input])];
     }
     f.expressionString = function() {
-        return `sequence(${a.map(function(e){
-            return e.expressionString() || e.toString();
+        return `sequence(${expressions.map(function(expression){
+            return expression.expressionString() || expression.toString();
         })})`;
     }
     return f;
@@ -48,21 +53,21 @@ export function sequence(a) {
  * Try to match a list of expressions until one succeeds. Return the result of
  * the first successful match. Fail if none of the expressions match.
  * @method choice
- * @param  {array} a An array of expressions to try to match
- * @return {function} Expression function
+ * @param  {array}    expressions An array of expressions to try to match
+ * @return {function}             Expression function
  */
-export function choice(a) {
-    let f = function(inp) {
-        for (let i = 0; i < a.length; i++) {
-            let matches = a[i](inp);
+export function choice(expressions) {
+    let f = function(input) {
+        for (let i = 0; i < expressions.length; i++) {
+            let matches = expressions[i](input);
             if (matches.length > 0)
                 return matches;
         }
         return [];
     }
     f.expressionString = function() {
-        return `choice(${a.map(function(e){
-            return e.expressionString() || e.toString();
+        return `choice(${expressions.map(function(expression){
+            return expression.expressionString() || expression.toString();
         })})`;
     }
     return f;
@@ -72,21 +77,21 @@ export function choice(a) {
  * Try to match an expression. If it succeeds, return the result. If it fails,
  * return null (still passing as a successful match).
  * @method optional
- * @param  {function} p The expression to match
- * @return {function} Expression function
+ * @param  {function} expression The expression to match
+ * @return {function}            Expression function
  */
-export function optional(p) {
-    let f = function(inp) {
-        let matches = p(inp);
+export function optional(expression) {
+    let f = function(input) {
+        let matches = expression(input);
         if (matches.length > 0) {
             return matches;
         }
         else {
-            return [[null, inp]];
+            return [[null, input]];
         }
     }
     f.expressionString = function() {
-        return `optional(${ p.expressionString() || p.toString() })`;
+        return `optional(${ expression.expressionString() || expression.toString() })`;
     }
     return f;
 }
@@ -94,16 +99,16 @@ export function optional(p) {
 /**
  * Match an expression without consuming input. Succeed if expression matches.
  * @method and
- * @param  {function} p The expression to match
- * @return {function} Expression function
+ * @param  {function} expression The expression to match
+ * @return {function}            Expression function
  */
-export function and(p) {
-    let f = function(inp) {
-        let matches = p(inp);
+export function and(expression) {
+    let f = function(input) {
+        let matches = expression(input);
         if (matches.length > 0) {
             // Don't consume any input
             return matches.map(function(match) {
-                return [undefined, inp];
+                return [undefined, input];
             });
         }
         else {
@@ -111,7 +116,7 @@ export function and(p) {
         }
     }
     f.expressionString = function() {
-        return `and(${ p.expressionString() || p.toString() })`;
+        return `and(${ expression.expressionString() || expression.toString() })`;
     }
     return f;
 }
@@ -119,23 +124,23 @@ export function and(p) {
 /**
  * Match an expression without consuming input. Succeed if expression does not match.
  * @method not
- * @param  {function} p The expression to match
- * @return {function} Expression function
+ * @param  {function} expression The expression to match
+ * @return {function}            Expression function
  */
-export function not(p) {
-    let f = function(inp) {
-        let matches = p(inp);
+export function not(expression) {
+    let f = function(input) {
+        let matches = expression(input);
         if (matches.length > 0) {
             // Fail
             return [];
         }
         else {
             // Succeed without consuming input
-            return [[undefined, inp]];
+            return [[undefined, input]];
         }
     }
     f.expressionString = function() {
-        return `not(${ p.expressionString() || p.toString() })`;
+        return `not(${ expression.expressionString() || expression.toString() })`;
     }
     return f;
 }
@@ -144,28 +149,28 @@ export function not(p) {
  * Match an expression one or more times, greedily. Return an array of all
  * matches. Fail if the expression doesn't match at least once.
  * @method some
- * @param  {function} p            The expression to match
+ * @param  {function} expression   The expression to match
  * @param  {array}    prevMatches  An array of previous matches (optional)
  * @return {function} Expression function
  */
-export function some(p, prevMatches) {
-    let f = function(inp) {
-        let matches = p(inp);
+export function some(expression, prevMatches) {
+    let f = function(input) {
+        let matches = expression(input);
         if (matches.length > 0) {
             let [matched, remaining] = matches[0];
             prevMatches = prevMatches || [];
             let allMatches = prevMatches.concat([matched])
-            return some(p, allMatches)(remaining);
+            return some(expression, allMatches)(remaining);
         }
         else {
             if (prevMatches === undefined) {
                 return [];
             }
-            return [[prevMatches, inp]];
+            return [[prevMatches, input]];
         }
     }
     f.expressionString = function() {
-        return `some(${ p.expressionString() || p.toString() })`;
+        return `some(${ expression.expressionString() || expression.toString() })`;
     }
     return f;
 }
@@ -180,9 +185,9 @@ export function some(p, prevMatches) {
  * @return {function} Expression function
  */
 export function char(c) {
-    let f = function(inp) {
-        if (inp[0] === c) {
-            return [[inp[0], inp.substring(1)]];
+    let f = function(input) {
+        if (input[0] === c) {
+            return [[input[0], input.substring(1)]];
         }
         else {
             return [];
@@ -201,10 +206,10 @@ export function char(c) {
  * @return {function} Expression function
  */
 export function string(s) {
-    let f = function(inp) {
-        let prefix = inp.substring(0, s.length);
+    let f = function(input) {
+        let prefix = input.substring(0, s.length);
         if (prefix === s) {
-            return [[prefix, inp.substring(s.length)]];
+            return [[prefix, input.substring(s.length)]];
         }
         else {
             return [];
@@ -222,9 +227,9 @@ export function string(s) {
  * @return {function} Expression function
  */
 export function digit() {
-    let f = function(inp) {
-        if ("0123456789".indexOf(inp[0]) > -1) {
-            return [[inp[0], inp.substring(1)]];
+    let f = function(input) {
+        if ("0123456789".indexOf(input[0]) > -1) {
+            return [[input[0], input.substring(1)]];
         }
         else {
             return [];
@@ -246,8 +251,8 @@ export function digit() {
  * @return {function} Expression function
  */
 export function nat() {
-    let f = function(inp) {
-        let matches = sequence([not(char('0')), digit(), some(digit())])(inp);
+    let f = function(input) {
+        let matches = sequence([not(char('0')), digit(), some(digit())])(input);
         if (matches.length > 0) {
             let [[_, head, tail], remaining] = matches[0];
             let digits = [head].concat(tail);
