@@ -1,28 +1,28 @@
 # Grammar
 
-A paper program consists of one or more lines of code.
+**A paper program consists of one or more lines of code.**
 
-`program` ← `line`+
+ - `program` ← `line`+
 
-Each line consists of one or more expressions.
+**Each line consists of one or more expressions.**
 
-`line` ← `expression`+ ( `'\n'` / `'\r'` )+
+ - `line` ← `expression`+ ( `'\n'` / `'\r'` )+
 
-An expression might be a literal such as a string or integer, an instruction, or a code block.
+**An expression might be a literal such as a string or integer, an instruction, or a code block.**
 
-`expression` ← ( `literal` / `instruction` / `block` )
+ - `expression` ← ( `literal` / `instruction` / `block` )
 
-A literal may be a character, a string, or an integer.
+**A literal may be a character, a string, or an integer.**
 
-`literal` ← ( `character_literal` \ `string_literal` \ `integer_literal` )
-`character_literal` ← `"'"` `.`
-`string_literal` ← `'"'` `.`+ `'"'`
-`integer_literal` ← `[0123456789]` \ (`'#'` `[0123456789]+`)
+ - `literal` ← ( `character_literal` \ `string_literal` \ `integer_literal` )
+    - `character_literal` ← `"'"` `.`
+    - `string_literal` ← `'"'` `.`+ `'"'`
+    - `integer_literal` ← `[0123456789]` \ (`'#'` `[0123456789]+`)
 
-A code block consists of a start character, a series of expressions, and a closing bracket, `}`.
+**A code block consists of a start character, a series of expressions, and a closing bracket, `}`.**
 
-`block` ← `[\{\?MR]` `expression`+ `'}'`
+ - `block` ← `[\{\?MR]` `expression`+ `'}'`
 
-An instruction may be any single character that is not a literal delimiter, a digit, a block start character, `}`, `\n` or `\r`.
+**An instruction may be any single character that is not a literal delimiter, a digit, a block start character, `}`, `\n` or `\r`.**
 
-`instruction` ← !`[\{\?MR\}\'\"\#\n\r]`
+ - `instruction` ← !`[\{\?MR\}\'\"\#\n\r]`
