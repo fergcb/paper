@@ -181,12 +181,12 @@ export function some(expression, prevMatches) {
 /**
  * Match a single character
  * @method char
- * @param  {string} c The character to match
+ * @param  {string} c The character to match. If none is given, allow any single char
  * @return {function} Expression function
  */
 export function char(c) {
     let f = function(input) {
-        if (input[0] === c) {
+        if (input.length > 0 && ((c === undefined) || input[0] === c)) {
             return [[input[0], input.substring(1)]];
         }
         else {
@@ -194,7 +194,8 @@ export function char(c) {
         }
     }
     f.expressionString = function() {
-        return `char('${ c }')`;
+        let type = c !== undefined ? `('${c}')` : '';
+        return `char${ type }`;
     }
     return f;
 }
