@@ -25,4 +25,4 @@
 
 **An instruction may be any single character that is not a literal delimiter, a digit, a block start character, `}`, `\n` or `\r`.**
 
- - `instruction` ← `^[\{\?MR\}\'\"\#\n\r]`
+ - `instruction` ← `[^\{\?MR\}\'\"\#\n\r]`
