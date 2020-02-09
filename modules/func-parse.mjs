@@ -27,7 +27,8 @@ export function parse(parser, input) {
  */
 export function sequence(expressions) {
     let f = function(input) {
-        return [expressions.reduce(function(acc, curr){
+        let ms = expressions.reduce(function(acc, curr){
+            if (acc === null) return null;
             let [matched, remaining] = acc;
             let matches = curr(remaining);
             if (matches.length > 0) {
@@ -36,10 +37,15 @@ export function sequence(expressions) {
             }
             else {
                 let funcString = curr.expressionString() || (curr.toString() + '\n');
-                throw "Failed to match `" + funcString + "` at '" + remaining + "'.";
+                console.warn("Failed to match `" + funcString + "` at '" + remaining + "'.");
             }
+            return null;
+        }, [[], input]);
+        
+        if (ms === null)
             return [];
-        }, [[], input])];
+        else
+            return [ms] ;
     }
     f.expressionString = function() {
         return `sequence(${expressions.map(function(expression){
