@@ -21,8 +21,9 @@
 
 **A code block consists of a start character, a series of expressions, and a closing bracket, `}`.**
 
- - `block` ← `[\{\?MR] expression+ '}'`
+ - `block_start` ← `[\{\?MR]`
+ - `block` ← `block_start expression+ '}'`
 
 **An instruction may be any single character that is not a literal delimiter, a digit, a block start character, `}`, `\n` or `\r`.**
 
- - `instruction` ← `[^\{\?MR\}\'\"\#\n\r]`
+ - `instruction` ← `!block_start [^\}\'\"\#\n\r]`
