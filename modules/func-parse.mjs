@@ -28,20 +28,22 @@ export function parse(parser, input) {
 export function sequence(expressions) {
     let f = function(input) {
         let ms = expressions.reduce(function(acc, curr){
+            let funcString = curr.expressionString() || (curr.toString() + '\n');
+
             if (acc === null) return null;
             let [matched, remaining] = acc;
             let matches = curr(remaining);
             if (matches.length > 0) {
                 let match = matches[0];
+                // console.log("Matched `" + funcString + "` with '" + match[0] + "'")
                 return [matched.concat([match[0]]), match[1]];
             }
             else {
-                let funcString = curr.expressionString() || (curr.toString() + '\n');
-                console.warn("Failed to match `" + funcString + "` at '" + remaining + "'.");
+                // console.log("Failed to match `" + funcString + "` at '" + remaining + "'.");
             }
             return null;
         }, [[], input]);
-        
+
         if (ms === null)
             return [];
         else
@@ -50,7 +52,7 @@ export function sequence(expressions) {
     f.expressionString = function() {
         return `sequence(${expressions.map(function(expression){
             return expression.expressionString() || expression.toString();
-        })})`;
+        }).join(', ')})`;
     }
     return f;
 }
@@ -74,7 +76,7 @@ export function choice(expressions) {
     f.expressionString = function() {
         return `choice(${expressions.map(function(expression){
             return expression.expressionString() || expression.toString();
-        })})`;
+        }).join(', ')})`;
     }
     return f;
 }
@@ -165,7 +167,7 @@ export function some(expression, prevMatches) {
         if (matches.length > 0) {
             let [matched, remaining] = matches[0];
             prevMatches = prevMatches || [];
-            let allMatches = prevMatches.concat([matched])
+            let allMatches = prevMatches.concat([matched]);
             return some(expression, allMatches)(remaining);
         }
         else {
