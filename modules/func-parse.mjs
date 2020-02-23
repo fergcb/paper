@@ -39,7 +39,7 @@ export function sequence(expressions) {
                 return [matched.concat([match[0]]), match[1]];
             }
             else {
-                // console.log("Failed to match `" + funcString + "` at '" + remaining + "'.");
+                // console.log("Failed to match `" + funcString + "` at '" + unescape(remaining) + "'.");
             }
             return null;
         }, [[], input]);
@@ -163,18 +163,28 @@ export function not(expression) {
  */
 export function some(expression, prevMatches) {
     let f = function(input) {
-        let matches = expression(input);
-        if (matches.length > 0) {
-            let [matched, remaining] = matches[0];
-            prevMatches = prevMatches || [];
-            let allMatches = prevMatches.concat([matched]);
-            return some(expression, allMatches)(remaining);
+        var foundMatch = false,
+            allMatches = [],
+            allRemaining = input;
+        do {
+            let matches = expression(allRemaining);
+            if (matches.length > 0) {
+                foundMatch = true;
+                let [matched, remaining] = matches[0];
+                allMatches.push(matched);
+                allRemaining = remaining;
+            }
+            else {
+                foundMatch = false;
+            }
+        }
+        while (foundMatch);
+
+        if (allMatches.length > 0) {
+            return [[allMatches, allRemaining]];
         }
         else {
-            if (prevMatches === undefined) {
-                return [];
-            }
-            return [[prevMatches, input]];
+            return [];
         }
     }
     f.expressionString = function() {
@@ -202,7 +212,7 @@ export function char(c) {
         }
     }
     f.expressionString = function() {
-        let type = c !== undefined ? `('${c}')` : '';
+        let type = c !== undefined ? `('${unescape(c)}')` : '';
         return `char${ type }`;
     }
     return f;
