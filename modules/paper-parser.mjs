@@ -32,14 +32,15 @@ class IntegerLiteral extends Literal {
 // High level parsing expressions
 
 export function parser() {
-    return some(expression());
-    /*return sequence([
+    // return some(expression());
+    return sequence([
                some(expression()),      // A line of code
                optional(some(sequence([ // Followed by zero or more lines of code,
                    linebreak(),         // Separated by linebreaks
                    some(expression())
                ])))
-           ]);*/
+           ]);
+
 }
 
 function linebreak() {
@@ -84,7 +85,7 @@ function char_literal() {
         let matches = exp(inp);
         if (matches.length > 0) {
             let match = matches[0];
-            let value = new StringLiteral(match[1]);
+            let value = new StringLiteral(match[0][1]);
             let remaining = inp.substring(2);
             return [[value, remaining]];
         }
