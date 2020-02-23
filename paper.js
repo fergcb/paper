@@ -1,17 +1,17 @@
-import {parse, sequence, choice, optional, some, and, string, char, digit, nat} from './modules/func-parse.mjs';
+import {parse} from './modules/func-parse.mjs';
+import {parser} from './modules/paper-parser.mjs';
 
 $(function() {
-    try {
-        let parser = nat();
-        let ast = parse(parser, '100');
-        console.log(ast);
-    }
-    catch (error) {
-        let $out = $('#output > textarea');
-        console.error(error);
-        $out.val($out.val() + "[ERROR] " + error + '\n')
-    }
-
-    var end = this.selectionEnd;
-
+    $("#runButton").click(function() {
+        try {
+            let code = $("#input > textarea").val();
+            let ast = parse(parser(), code);
+            console.log(ast);
+        }
+        catch (error) {
+            let $out = $('#output > textarea');
+            console.error(error);
+            $out.val($out.val() + "[ERROR] " + error + '\n')
+        }
+    });
 });
