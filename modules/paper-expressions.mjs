@@ -1,7 +1,21 @@
+import {instructions} from './paper-instructions.mjs';
+
 // Token classes
 
 export class Expression {
-    execute(stack, currentLine) {}
+    execute(stack, currentLine) { return [stack, currentLine]; }
+}
+
+export class Instruction extends Expression {
+
+    constructor(c) {
+        super();
+        this.char = c;
+    }
+
+    execute(stack, currentLine) {
+        return instructions[this.char](stack, currentLine);
+    }
 }
 
 

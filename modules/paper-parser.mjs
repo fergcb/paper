@@ -1,5 +1,5 @@
 import {parse, sequence, choice, optional, some, and, not, char, digit} from './func-parse.mjs';
-import {MapBlock, RepeatBlock, DecisionBlock, BlockLiteral, StringLiteral, IntegerLiteral} from './paper-expressions.mjs';
+import {MapBlock, RepeatBlock, DecisionBlock, BlockLiteral, StringLiteral, IntegerLiteral, Instruction} from './paper-expressions.mjs';
 
 // High level parsing expressions
 
@@ -38,11 +38,12 @@ function instruction() {
         let exp = sequence([
             not(char(MapBlock.type)), not(char(RepeatBlock.type)), not(char(DecisionBlock.type)), not(char(BlockLiteral.type)),
             not(char('|')), not(char('}')), not(char('"')), not(char("'")), not(char("#")), not(digit()),
+            not(linebreak()),
             char()
         ]);
         let matches = exp(input);
         if (matches.length > 0) {
-            return [[input[0], input.substring(1)]];
+            return [[new Instruction(input[0]), input.substring(1)]];
         }
         else {
             return [];
