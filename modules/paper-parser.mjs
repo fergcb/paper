@@ -6,6 +6,59 @@ class Expression {
     execute(stack, currentLine) {}
 }
 
+
+class Block extends Expression {
+    constructor(exps) {
+        super();
+        this.expressions = exps;
+    }
+}
+
+class MapBlock extends Block {
+
+    static get type() {
+        return 'M';
+    }
+
+    constructor(exps) {
+        super(exps);
+    }
+
+    execute(stack, currentLine) {
+        // TODO: Map block execution
+    }
+}
+
+class RepeatBlock extends Block {
+
+    static get type() {
+        return 'R';
+    }
+
+    constructor(exps) {
+        super(exps);
+    }
+
+    execute(stack, currentLine) {
+        // TODO: Repeat block execution
+    }
+}
+
+class DecisionBlock extends Block {
+
+    static get type() {
+        return '?';
+    }
+
+    constructor(exps) {
+        super(exps);
+    }
+
+    execute(stack, currentLine) {
+        // TODO: Decision block execution
+    }
+}
+
 class Literal extends Expression {
     constructor(value) {
         super();
@@ -24,6 +77,17 @@ class StringLiteral extends Literal {
 }
 
 class IntegerLiteral extends Literal {
+    constructor(value) {
+        super(value);
+    }
+}
+
+class BlockLiteral extends Literal {
+
+    static get type() {
+        return '{';
+    }
+
     constructor(value) {
         super(value);
     }
@@ -51,10 +115,64 @@ linebreak.expressionString = function() {
 }
 
 function expression() {
-    return choice([string_literal(), char_literal(), integer_literal()]);
+    return choice([
+               string_literal(), char_literal(), integer_literal(), digit_literal(),
+               block(MapBlock), block(RepeatBlock), block(DecisionBlock), block(BlockLiteral),
+               instruction(),
+           ]);
 }
 expression.expressionString = function() {
     return 'expression';
+}
+
+function instruction() {
+    let f = function(input) {
+        let exp = sequence([
+            not(char(MapBlock.type)), not(char(RepeatBlock.type)), not(char(DecisionBlock.type)), not(char(BlockLiteral.type)),
+            not(char('|')), not(char('}')), not(char('"')), not(char("'")), not(char("#")), not(digit()),
+            char()
+        ]);
+        let matches = exp(input);
+        if (matches.length > 0) {
+            return [[input[0], input.substring(1)]];
+        }
+        else {
+            return [];
+        }
+    }
+
+    return f;
+}
+
+function block(blockClass) {
+    let f = function(input) {
+        let exp = sequence([
+            char(blockClass.type),
+            some(expression()),
+            optional(some(sequence([
+                char('|'),
+                some(expression())
+            ]))),
+            char('}')
+        ]);
+        let matches = exp(input);
+        if (matches.length > 0) {
+            let [matched, remaining] = matches[0];
+            let exps = matched[1];
+            if (matched[2] != null) {
+                let tail = matched[2].map(x => x[1]);
+                exps = [exps, ...tail]
+            }
+            return [[new blockClass(exps), remaining]];
+        }
+
+        return [];
+    }
+
+    f.expressionString = function() {
+        return `block(${blockClass.type})`;
+    }
+    return f;
 }
 
 function string_literal() {
@@ -102,7 +220,7 @@ char_literal.expressionString = function() {
     return 'char_literal';
 }
 
-function integer_literal() {
+function digit_literal() {
     let f = function(inp) {
         let exp = digit();
         let matches = exp(inp);
@@ -116,8 +234,33 @@ function integer_literal() {
         }
     }
     f.expressionString = function() {
+        return 'digit_literal';
+    }
+    return f;
+}
+digit_literal.expressionString = function() {
+    return 'digit_literal';
+}
+
+function integer_literal() {
+    let f = function(inp) {
+        let exp = sequence([char('#'), some(digit())]);
+        let matches = exp(inp);
+        if (matches.length > 0) {
+            let match = matches[0];
+            let int = match[0][1].join("");
+            let value = new IntegerLiteral(parseInt(int, 10));
+            let remaining = inp.substring(1 + int.length);
+            return [[value, remaining]];
+        }
+        else {
+            return [];
+        }
+    }
+    f.expressionString = function() {
         return 'integer_literal';
     }
+
     return f;
 }
 integer_literal.expressionString = function() {
