@@ -74,8 +74,10 @@ export function choice(expressions) {
         return [];
     }
     f.expressionString = function() {
-        return `choice(${expressions.map(function(expression){
-            return expression.expressionString() || expression.toString();
+        return `choice(${expressions.map(function(expression) {
+            if (typeof expression.expressionString === 'function')
+                return expression.expressionString();
+            else return expression.toString();
         }).join(', ')})`;
     }
     return f;
